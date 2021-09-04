@@ -1,0 +1,26 @@
+.outer-container {
+    position: absolute;
+    overflow: auto;
+    background-color: #FFF;
+    #widget-actions {
+        display: flex;
+        width: 3.5%;
+        justify-content: space-between;
+        .action-button {
+            border-radius: 100%;
+            height: 10px;
+            width: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.7);
+            cursor: pointer;
+        }
+        #close {
+            background-color: orangered;
+        }
+        #minimize {
+            background-color: orange;
+        } 
+        #expand {
+            background-color: greenyellow;
+        }
+    }
+}
