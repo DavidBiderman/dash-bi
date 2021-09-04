@@ -1,2 +1,2 @@
 # dash-bi
-POC Dashboard
+POC Bespoke Dashboard
