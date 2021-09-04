@@ -1,9 +1,12 @@
 <div id="modal-backdrop" >
     <div id="modal-content" [@dropDown]="show ? 'show' : 'hidden'">
+        <div>PLACEHOLDER FOR CONTENT - THIS WILL BE DONE VIA INJECTION TO NG-TEMPLATE</div>
+        <ng-template appMessageHost></ng-template> <!--this is where we inject our content according to type received (e.g CreateWidgetComponent)-->
         <div id="footer">
-            <button (click)="confirm()">CONFIRM</button>
-            <button (click)="cancel()">CANCEL</button>
+            <div id="footer-content">
+                <button (click)="confirm()" class="confirm">CONFIRM</button>
+                <button (click)="cancel()" class="cancel">CANCEL</button>
+            </div>
         </div>
-        <ng-template appMessageHost></ng-template>
     </div>
 </div>

@@ -11,10 +11,48 @@
     #modal-content {
         position: absolute;
         display: flex;
-        width: 35vw;
-        height: 82vh;
+        justify-content: center;
+        align-items: center;
+        width: 31vw;
+        padding: 2em;
+        height: 78vh;
         background-color: #FFF;
         border-radius: 4px;
         box-shadow: 0px 1px 4px 1px #fefefe;
+    }
+    #footer {
+        position: absolute;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 10vh;
+        #footer-content {
+            width: 75%;
+            display: flex;
+            justify-content: space-between;
+            button {
+                padding: 10px;
+                width: 120px;
+                border-radius: 4px;
+                border: 2px solid #A4ABB3;
+                cursor: pointer;
+                white-space: nowrap;
+                box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4);
+                color: #FFF;
+                font-family: sans-serif;
+                &:active {
+                    box-shadow:  0 0 0 0 rgba(0, 0, 0, 0.4);
+                    transform: translateY(1px);
+                }
+            }
+            .confirm {
+                background-color: #40D353;
+            }
+            .cancel {
+                background-color: #F15048;
+            }
+        }
     }
 }
