@@ -4,6 +4,7 @@ import { ContainerComponent } from '../shared/components/container/container.com
 import { MessageHostDirective } from '../shared/directives/message-host.directive';
 import { isColliding } from './utils/canvas-utils';
 import { TableComponent } from '../shared/components/table/table.component';
+import { ModalComponent } from '../shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-canvas',
@@ -14,8 +15,10 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
   @ViewChild('mainCanvas', {static: false}) canvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('addWidgetPopup', {static: false}) popup!: ModalComponent;
   @ViewChildren(MessageHostDirective) widgetContainers!: QueryList<MessageHostDirective>;
   public widgets: Array<any> = [];
+  public showModal!: boolean;
   private ctx!: CanvasRenderingContext2D;
   private components: Array<ComponentRef<ContainerComponent>> = [];
   private rectangles: Array<Rectangle> = [];
@@ -227,6 +230,19 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     this.positionWidget(current);
   }
 
+  openCreateWidgetDialog = ($event: any) => {
+    this.showModal = true;
+    this.cd.detectChanges();
+    
+    const sub = this.popup.observable.subscribe((confirm: boolean) => {
+      if (confirm) {
+        this.addWidget($event);
+      }
+      sub.unsubscribe();
+      this.showModal = false;
+    })
+  }
+
   createWidget = (rect: Rectangle): void => {
     // First create our component factory with the resolver
     const compFactory = this.resolver.resolveComponentFactory(ContainerComponent);
@@ -263,7 +279,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private positionWidget(rect: Rectangle) {
+  private positionWidget = (rect: Rectangle) => {
     const widget: ComponentRef<ContainerComponent> = this.components[this.rectangles.findIndex(curr => curr === rect)];
     if (widget) {
       widget.instance.height = rect.height - 33;

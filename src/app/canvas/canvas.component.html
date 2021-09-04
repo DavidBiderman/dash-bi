@@ -1,7 +1,8 @@
 <div id="app">
-    <div id="header"><button id="add-widget-button" (click)="addWidget($event)">ADD WIDGET</button></div>
+    <div id="header"><button id="add-widget-button" (click)="openCreateWidgetDialog($event)">ADD WIDGET</button></div>
     <div #container id="container">
         <canvas #mainCanvas id="main-canvas"></canvas>
     </div>
     <ng-template #widgetContainer appMessageHost *ngFor="let widget of widgets"></ng-template> 
+    <app-modal *ngIf="showModal" #addWidgetPopup></app-modal>
 </div>

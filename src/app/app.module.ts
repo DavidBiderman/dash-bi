@@ -7,6 +7,8 @@ import { CanvasComponent } from './canvas/canvas.component';
 import { ContainerComponent } from './shared/components/container/container.component';
 import { TableComponent } from './shared/components/table/table.component';
 import { MessageHostDirective } from './shared/directives/message-host.directive';
+import { ModalComponent } from './shared/components/modal/modal.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({ 
   declarations: [
@@ -14,7 +16,8 @@ import { MessageHostDirective } from './shared/directives/message-host.directive
     CanvasComponent,
     ContainerComponent,
     MessageHostDirective,
-    TableComponent
+    TableComponent,
+    ModalComponent
   ],
   entryComponents: [
     ContainerComponent,
@@ -22,7 +25,8 @@ import { MessageHostDirective } from './shared/directives/message-host.directive
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
