@@ -80,7 +80,6 @@ export class ContainerComponent implements OnInit, AfterViewInit, OnDestroy, ICo
   }
 
   ngOnDestroy() {
-
   }
 
   setWidgetButtons() {
