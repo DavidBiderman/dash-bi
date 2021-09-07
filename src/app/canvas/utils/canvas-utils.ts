@@ -1,3 +1,5 @@
+import { ComponentRef } from "@angular/core";
+import { ContainerComponent } from "src/app/shared/components/container/container.component";
 import { Rectangle } from "../canvas-models/rectangle.model";
 
 /**
@@ -15,13 +17,14 @@ export function detectCollision(a: any, b: any) {
     ); 
 } 
 
+// ============================== COLLISION DETECTION ============================== //
 /**
  * 
  * @param rectA the "moving" rect to check on
  * @param rectB "set" rect to check against
  * @returns Whether a collision is occuring between two shapes
  */
-export function isColliding(rectA: Rectangle, rectB: Rectangle): boolean {
+export const isColliding = (rectA: Rectangle, rectB: Rectangle): boolean => {
     return (LRCollide(rectA, rectB) || RLCollide(rectA, rectB) || UDCollide(rectA, rectB) || DUCollide(rectA, rectB));
 }
 
@@ -55,4 +58,28 @@ const isTouchingRight = (rectA: Rectangle, rectB: Rectangle): boolean => {
 
 const isTouchingLeft = (rectA: Rectangle, rectB: Rectangle): boolean => {
     return (rectA.x + rectA.width >= rectB.x && rectA.x <= rectB.x);
+}
+
+// ============================== HTML TO SVG CONVERSION  (NOT WORKING MOTHER FUCKER!!!!!!)============================== //
+const svgTemplate = `
+<svg xmlns="http://www.w3.org/2000/svg" width="{{width}}" height="{{height}}">
+    <foreignObject width="100%" height="100%">
+        {{content}}
+    </foreignObject>
+</svg>;
+`
+
+export const htmlToSvg = (widget: ComponentRef<ContainerComponent>): string => {
+    const doc = document.implementation.createHTMLDocument("");
+    let template = svgTemplate.toString(); // get a copy of the template;
+    const outerContainer: HTMLDivElement = (widget.location.nativeElement as HTMLElement).firstChild as unknown as HTMLDivElement;
+    template = template.replace('{{width}}', outerContainer.style.width);
+    template = template.replace('{{height}}', outerContainer.style.height);
+    template = template.replace('{{content}}', widget.location.nativeElement.innerHTML);
+    doc.write(template);
+    const validXml = (new XMLSerializer).serializeToString(outerContainer);
+    doc.documentElement.setAttribute("xmlns", (doc.documentElement as any).namespaceURI);
+    (new XMLSerializer).serializeToString(doc);
+
+    return URL.createObjectURL(new Blob([template], {type: 'image/svg+xml;charset=utf-8'}));
 }

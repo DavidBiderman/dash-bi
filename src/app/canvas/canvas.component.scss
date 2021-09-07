@@ -6,7 +6,8 @@
         height: 10%;
         width: 100%; 
         display: flex;
-        border: 1px solid rgba(117, 218, 23, 0.575);
+        background-color: #F4F5F7;
+        justify-content: flex-end;
         align-items: center;
         #add-widget-button {
             height: 4vh;

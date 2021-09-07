@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, ComponentRef, ElementRef, HostListener, Injector, OnInit, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, ComponentRef, ElementRef, HostListener, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Rectangle } from './canvas-models/rectangle.model';
 import { ContainerComponent } from '../shared/components/container/container.component';
 import { MessageHostDirective } from '../shared/directives/message-host.directive';
@@ -68,29 +68,36 @@ export class CanvasComponent implements OnInit, AfterViewInit {
   }
 
   addWidget = ($event: any): void => {
-    const newRect = new Rectangle($event.offsetX + 250, $event.offsetY + 150, '#15ABFF', 500, 250);
+    // XXX '#2f313a' -> use this color for dark theme (approixmation... Find a more suitable color after...)
+    const newRect = new Rectangle($event.offsetX + 250, $event.offsetY + 150, '#FFF', 500, 250);
     this.rectangles.push(newRect);
     this.redraw();
     this.createWidget(newRect);
   }
 
   mousedownHandler = (event: any): void => {
-    this.rectangles.forEach(rect => rect.setActive(this.ctx, false));
+    this.rectangles.forEach(rect => rect.setActive(false));
     // check if coords overlap any one of the rects that we already created.
     const rectangle = this.rectangles.find((rectangle) => this.isInFocus(rectangle, event.offsetX, event.offsetY));
     if (rectangle) {
       this.original = {...rectangle};
       this.activeObject = rectangle;
+      rectangle.isDragging = true;
       if (this.setResize(rectangle, event.offsetX, event.offsetY)) {
         this.isResizing = true;
         this.rectangles.forEach((rectangle) => rectangle.draw(this.ctx));
-        this.activeObject.setActive(this.ctx, true);
+        this.activeObject.setActive(true);
         this.objectActive = true;
       } else { 
+        // const svg = htmlToSvg(widget);
+        const image = '/assets/images/drag-images/table-placeholder.png';
         this.canvas.nativeElement.classList.add('dragging');
         this.objectActive = true;
         this.distanceFromCorner[0] = event.offsetX - rectangle.x;
         this.distanceFromCorner[1] = event.offsetY - rectangle.y;
+        rectangle.setImg(image);
+        this.hideWidget((rectangle as Rectangle));
+        rectangle.draw(this.ctx);
       }
     } else {
       this.objectActive = false;
@@ -121,9 +128,9 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         }
         this.setWidgetState((existingRectangle as Rectangle));
       }
-      this.positionWidget((existingRectangle as Rectangle));
+      // this.positionWidget((existingRectangle as Rectangle));
     } else {
-      this.rectangles.forEach(rect => rect.setActive(this.ctx, false));
+      this.rectangles.forEach(rect => rect.setActive(false));
       this.canvas.nativeElement.classList.remove('resize');
       this.canvas.nativeElement.classList.remove('drag');
     }
@@ -139,11 +146,14 @@ export class CanvasComponent implements OnInit, AfterViewInit {
       this.objectActive = false;
       this.distanceFromCorner[0] = -1;
       this.distanceFromCorner[1] = -1;
-      this.clearScreen()
-      this.redraw();
-      this.positionWidget(existingRectangle);
       this.canvas.nativeElement.classList.remove('dragging');
       delete this.activeObject;
+      existingRectangle.removeImg();
+      existingRectangle.isDragging = false;
+      this.clearScreen()
+      this.redraw();
+      this.showWidget(existingRectangle);
+      this.positionWidget(existingRectangle);
     }
   }
 
@@ -153,11 +163,9 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
   private setWidgetState = (rect: Rectangle) => {
     if (this.checkCollisions(rect)) {
-      rect.color = 'red';
       rect.isValid = false;
       rect.draw(this.ctx);
     } else {
-      rect.color = '#15ABFF';
       rect.isValid = true;
       rect.draw(this.ctx);
     }
@@ -165,7 +173,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
   private isInFocus = (rect: Rectangle, x: number, y: number): boolean => {
     return (
-      (rect.x <= x && x <= rect.x + rect.width + 20) && (rect.y <= y && y <= rect.y + rect.height + 20)
+      (rect.x <= x && x <= rect.x + rect.width) && (rect.y <= y && y <= rect.y + rect.height)
     );
   }
 
@@ -227,13 +235,14 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     current.color = this.original.color;
     current.width = this.original.width; 
     current.height = this.original.height;
+    current.isValid = true;
     this.positionWidget(current);
   }
 
   openCreateWidgetDialog = ($event: any) => {
     this.showModal = true;
     this.cd.detectChanges();
-    
+
     const sub = this.popup.observable.subscribe((confirm: boolean) => {
       if (confirm) {
         this.addWidget($event);
@@ -257,7 +266,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     if (viewContainerRef) {
       const component = viewContainerRef.createComponent(compFactory);
       component.instance.height = rect.height - 16;
-      component.instance.width = rect.width - 2;
+      component.instance.width = rect.width;
       component.instance.left = rect.x + this.canvas.nativeElement.offsetLeft;
       component.instance.top = rect.y + this.canvas.nativeElement.offsetTop + 17;
       component.instance.compType = TableComponent; // XXX: Take out to dynamic function and add pop up to allow selection
@@ -286,6 +295,20 @@ export class CanvasComponent implements OnInit, AfterViewInit {
       widget.instance.width = rect.width;
       widget.instance.left = rect.x + this.canvas.nativeElement.offsetLeft;
       widget.instance.top = rect.y + this.canvas.nativeElement.offsetTop + 17;
+    }
+  }
+
+  private hideWidget = (rect: Rectangle) => {
+    const widget: ComponentRef<ContainerComponent> = this.components[this.rectangles.findIndex(curr => curr === rect)];
+    if (widget) {
+      widget.instance.hide();
+    }
+  }
+
+  private showWidget = (rect:Rectangle) => {
+    const widget: ComponentRef<ContainerComponent> = this.components[this.rectangles.findIndex(curr => curr === rect)];
+    if (widget) {
+      widget.instance.show();
     }
   }
 

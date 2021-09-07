@@ -9,6 +9,7 @@ import { TableComponent } from './shared/components/table/table.component';
 import { MessageHostDirective } from './shared/directives/message-host.directive';
 import { ModalComponent } from './shared/components/modal/modal.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DigitalClockComponent } from './shared/components/digital-clock/digital-clock.component';
 
 @NgModule({ 
   declarations: [
@@ -17,7 +18,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ContainerComponent,
     MessageHostDirective,
     TableComponent,
-    ModalComponent
+    ModalComponent,
+    DigitalClockComponent
   ],
   entryComponents: [
     ContainerComponent,

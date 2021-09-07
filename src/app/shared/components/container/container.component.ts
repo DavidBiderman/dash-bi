@@ -23,7 +23,7 @@ export class ContainerComponent implements OnInit, AfterViewInit, OnDestroy, ICo
   set width(value: number) {
     this._width = value;
     if (this.container) {
-      this.container.nativeElement.style.width = `${this._width - 2}px`;
+      this.container.nativeElement.style.width = `${this._width}px`;
       this.setWidgetButtons();
     }
   }
@@ -48,7 +48,7 @@ export class ContainerComponent implements OnInit, AfterViewInit, OnDestroy, ICo
   set left(value: number) {
     this._left = value;
     if (this.container) {
-      this.container.nativeElement.style.left = `${this._left + 2}px`; // +1 for margin, XXX: get param directly from top level
+      this.container.nativeElement.style.left = `${this._left + 1}px`;
       this.setWidgetButtons();
     }
   }
@@ -74,7 +74,7 @@ export class ContainerComponent implements OnInit, AfterViewInit, OnDestroy, ICo
     this.container.nativeElement.style.height = `${this._height - 17}px`;
     this.container.nativeElement.style.width = `${this._width}px`;
     this.container.nativeElement.style.top = `${this._top}px`;
-    this.container.nativeElement.style.left = `${this._left + 2}px`;
+    this.container.nativeElement.style.left = `${this._left + 1}px`;
     this.setWidgetButtons();
     this.cd.detectChanges();
   }
@@ -98,6 +98,14 @@ export class ContainerComponent implements OnInit, AfterViewInit, OnDestroy, ICo
   
   minimizeContainer() {
     this.subject.next('MINIMIZE');
+  }
+
+  hide() {
+    this.container.nativeElement.style.visibility = 'hidden';
+  }
+
+  show() {
+    this.container.nativeElement.style.visibility = 'visible';
   }
 
 }
